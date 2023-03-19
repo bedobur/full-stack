@@ -1,6 +1,6 @@
 {
-  "short_name": "Conduit",
-  "name": "RealWord - React",
+  "short_name": "Disaster Aid",
+  "name": "Disaster Aid application using Express - Sequalize - React",
   "icons": [
     {
       "src": "favicon.ico",

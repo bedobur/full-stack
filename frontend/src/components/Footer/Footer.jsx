@@ -5,14 +5,11 @@ function Footer() {
   return (
     <div className="container">
       <Link to="/" className="logo-font">
-        conduit
+        Disaster Aid
       </Link>
       <span className="attribution">
-        An interactive learning project from{" "}
-        <a href="https://thinkster.io">Thinkster</a>. Code &amp; design licensed
-        under MIT.
+        Help Coordination 
       </span>
-
       <SourceCodeLink right />
     </div>
   );
