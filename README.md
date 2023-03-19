@@ -1,12 +1,6 @@
-# ![RealWorld Example App](logo.png)
-
 > ### React / Express.js / Sequelize / PostgreSQL codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.io/) spec and API.
 
-### [Demo app](https://conduit-realworld-example-app.fly.dev/)&nbsp;&nbsp;|&nbsp;&nbsp;[RealWorld Example Apps](https://codebase.show/projects/realworld?category=fullstack)&nbsp;&nbsp;|&nbsp;&nbsp;![](https://heroku-status-badges.herokuapp.com/conduit-realworld-example-app)
-
 This codebase was created to demonstrate a fully fledged fullstack application built with **React / Express.js / Sequelize / PostgreSQL** including CRUD operations, authentication, routing, pagination, and more.
-
-For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
 
 ## Prerequisites
 
