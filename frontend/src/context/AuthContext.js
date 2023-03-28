@@ -23,7 +23,7 @@ const authState = {
 
 function AuthProvider({ children }) {
   const [{ headers, isAuth, loggedUser }, setAuthState] = useState(
-    loggedIn || authState,
+    loggedIn || authState
   );
 
   useEffect(() => {
