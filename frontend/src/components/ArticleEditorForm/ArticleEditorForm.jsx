@@ -3,14 +3,18 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import getArticle from "../../services/getArticle";
 import setArticle from "../../services/setArticle";
+import getTagsSelect from "../../services/getTagsSelect";
 import FormFieldset from "../FormFieldset";
+import { TreeSelect } from "primereact/treeselect";
 
 const emptyForm = { title: "", description: "", body: "", tagList: "" };
+var tags = [];
+getTagsSelect().then((res) => {tags = res.data});
 
 function ArticleEditorForm() {
   const { state } = useLocation();
   const [{ title, description, body, tagList }, setForm] = useState(
-    state || emptyForm,
+    state || emptyForm
   );
   const [errorMessage, setErrorMessage] = useState("");
   const { isAuth, headers, loggedUser } = useAuth();
@@ -89,7 +93,7 @@ function ArticleEditorForm() {
           ></textarea>
         </fieldset>
 
-        <FormFieldset
+        {/*<FormFieldset
           normal
           placeholder="Enter tags"
           name="tags"
@@ -97,7 +101,22 @@ function ArticleEditorForm() {
           handler={tagsInputHandler}
         >
           <div className="tag-list"></div>
-        </FormFieldset>
+        </FormFieldset>*/}
+
+        <fieldset className="form-group">
+          <TreeSelect
+            filter
+            placeholder="Enter tag"
+            name="tags"
+            value={tagList}
+            onChange={tagsInputHandler}
+            options={tags}
+            //handler={tagsInputHandler}
+            className="form-control"
+            //required
+          />
+          <div className="tag-list"></div>
+        </fieldset>
 
         <button className="btn btn-lg pull-xs-right btn-primary" type="submit">
           {slug ? "Update Article" : "Publish Article"}
