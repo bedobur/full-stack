@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import SourceCodeLink from "../SourceCodeLink";
+//import SourceCodeLink from "../SourceCodeLink";
 
 function Footer() {
   return (
@@ -10,7 +10,6 @@ function Footer() {
       <span className="attribution">
         Help Coordination 
       </span>
-      <SourceCodeLink right />
     </div>
   );
 }

@@ -12,6 +12,8 @@ function FeedToggler() {
         {isAuth && <FeedNavLink name="feed" text="Your Feed" />}
 
         <FeedNavLink name="global" text="Global Feed" />
+        <FeedNavLink name="giver" text="Aid Giver Feed" />
+        <FeedNavLink name="taker" text="Aid Taker Feed" />
 
         {tabName === "tag" && <FeedNavLink icon name="tag" text={tagName} />}
       </ul>

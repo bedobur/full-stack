@@ -1,3 +1,6 @@
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+
 const {
   AlreadyTakenError,
   FieldRequiredError,
@@ -30,7 +33,9 @@ const allArticles = async (req, res, next) => {
           model: Tag,
           as: "tagList",
           attributes: ["name"],
-          ...(tag && { where: { name: tag } }),
+          ...(tag && { where: { name:(tag === 'giver' || tag === 'taker')? {
+            [Op.like]: `%_${tag}`
+          }:tag} }),
         },
         {
           model: User,
@@ -82,8 +87,8 @@ const createArticle = async (req, res, next) => {
     if (!body) throw new FieldRequiredError("An article body");
 
     const slug = slugify(title);
-    const slugInDB = await Article.findOne({ where: { slug: slug } });
-    if (slugInDB) throw new AlreadyTakenError("Title");
+    //const slugInDB = await Article.findOne({ where: { slug: slug } });
+    //if (slugInDB) throw new AlreadyTakenError("Title");
 
     const article = await Article.create({
       slug: slug,
