@@ -45,7 +45,7 @@ function CommentEditor({ updateComments }) {
   ) : (
     <span>
       <Link to="/login">Sign in</Link> or <Link to="/register">Sign up</Link> to
-      add comments on this article.
+      add comments on this aid.
     </span>
   );
 }

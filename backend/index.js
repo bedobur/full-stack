@@ -7,9 +7,9 @@ const errorHandler = require("./middleware/errorHandler");
 
 const usersRoutes = require("./routes/users");
 const userRoutes = require("./routes/user");
-const articlesRoutes = require("./routes/articles");
+const aidsRoutes = require("./routes/aids");
 const profilesRoutes = require("./routes/profiles");
-const tagsRoutes = require("./routes/tags");
+const categoriesRoutes = require("./routes/categories");
 
 const app = express();
 app.use(cors());
@@ -31,9 +31,9 @@ if (process.env.NODE_ENV === "production") {
 }
 app.use("/api/users", usersRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/articles", articlesRoutes);
+app.use("/api/aids", aidsRoutes);
 app.use("/api/profiles", profilesRoutes);
-app.use("/api/tags", tagsRoutes);
+app.use("/api/categories", categoriesRoutes);
 app.get("*", (req, res) =>
   res.status(404).json({ errors: { body: ["Not found"] } }),
 );

@@ -5,18 +5,18 @@ const {
   ForbiddenError,
 } = require("../helper/customErrors");
 const { appendFollowers } = require("../helper/helpers");
-const { Article, Comment, User } = require("../models");
+const { Aid, Comment, User } = require("../models");
 
-//? All Comments for Article
+//? All Comments for Aid
 const allComments = async (req, res, next) => {
   try {
     const { loggedUser } = req;
     const { slug } = req.params;
 
-    const article = await Article.findOne({ where: { slug: slug } });
-    if (!article) throw new NotFoundError("Article");
+    const aid = await Aid.findOne({ where: { slug: slug } });
+    if (!aid) throw new NotFoundError("Aid");
 
-    const comments = await article.getComments({
+    const comments = await aid.getComments({
       include: [
         { model: User, as: "author", attributes: { exclude: ["email"] } },
       ],
@@ -32,7 +32,7 @@ const allComments = async (req, res, next) => {
   }
 };
 
-//* Create Comment for Article
+//* Create Comment for Aid
 const createComment = async (req, res, next) => {
   try {
     const { loggedUser } = req;
@@ -42,12 +42,12 @@ const createComment = async (req, res, next) => {
     if (!body) throw new FieldRequiredError("Comment body");
 
     const { slug } = req.params;
-    const article = await Article.findOne({ where: { slug: slug } });
-    if (!article) throw new NotFoundError("Article");
+    const aid = await Aid.findOne({ where: { slug: slug } });
+    if (!aid) throw new NotFoundError("Aid");
 
     const comment = await Comment.create({
       body: body,
-      articleId: article.id,
+      aidId: aid.id,
       userId: loggedUser.id,
     });
 
@@ -61,7 +61,7 @@ const createComment = async (req, res, next) => {
   }
 };
 
-//* Delete Comment for Article
+//* Delete Comment for Aid
 const deleteComment = async (req, res, next) => {
   try {
     const { loggedUser } = req;

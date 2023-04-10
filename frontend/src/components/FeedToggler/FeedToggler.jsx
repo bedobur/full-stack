@@ -4,18 +4,16 @@ import FeedNavLink from "./FeedNavLink";
 
 function FeedToggler() {
   const { isAuth } = useAuth();
-  const { tabName, tagName } = useFeedContext();
+  const { tabName, categoryName } = useFeedContext();
 
   return (
     <div className="feed-toggle">
       <ul className="nav nav-pills outline-active">
-        {isAuth && <FeedNavLink name="feed" text="Your Feed" />}
-
+        {isAuth && <FeedNavLink name="feed" text="Follower Feed" />}
         <FeedNavLink name="global" text="Global Feed" />
-        <FeedNavLink name="giver" text="Aid Giver Feed" />
-        <FeedNavLink name="taker" text="Aid Taker Feed" />
-
-        {tabName === "tag" && <FeedNavLink icon name="tag" text={tagName} />}
+        <FeedNavLink name="provider" text="Aid Providers" />
+        <FeedNavLink name="requester" text="Aid Requesters" />
+        {tabName === "category" && <FeedNavLink icon name="category" text={categoryName} />}
       </ul>
     </div>
   );

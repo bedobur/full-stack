@@ -6,10 +6,10 @@ async function toggleFav({ slug, favorited, headers }) {
     const { data } = await axios({
       headers,
       method: favorited ? "DELETE" : "POST",
-      url: `api/articles/${slug}/favorite`,
+      url: `api/aids/${slug}/favorite`,
     });
 
-    return data.article;
+    return data.aid;
   } catch (error) {
     errorHandler(error);
   }

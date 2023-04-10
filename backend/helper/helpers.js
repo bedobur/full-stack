@@ -2,19 +2,19 @@ const slugify = (string) => {
   return string.trim().toLowerCase().replace(/\W|_/g, "-");
 };
 
-const appendTagList = (articleTags, article) => {
-  const tagList = articleTags.map((tag) => tag.name);
+const appendCategoryList = (aidCategories, aid) => {
+  const categoryList = aidCategories.map((category) => category.name);
 
-  if (!article) return tagList;
-  article.dataValues.tagList = tagList;
+  if (!aid) return categoryList;
+  aid.dataValues.categoryList = categoryList;
 };
 
-const appendFavorites = async (loggedUser, article) => {
-  const favorited = await article.hasUser(loggedUser ? loggedUser : null);
-  article.dataValues.favorited = loggedUser ? favorited : false;
+const appendFavorites = async (loggedUser, aid) => {
+  const favorited = await aid.hasUser(loggedUser ? loggedUser : null);
+  aid.dataValues.favorited = loggedUser ? favorited : false;
 
-  const favoritesCount = await article.countUsers();
-  article.dataValues.favoritesCount = favoritesCount;
+  const favoritesCount = await aid.countUsers();
+  aid.dataValues.favoritesCount = favoritesCount;
 };
 
 const appendFollowers = async (loggedUser, toAppend) => {
@@ -39,4 +39,4 @@ const appendFollowers = async (loggedUser, toAppend) => {
   }
 };
 
-module.exports = { slugify, appendTagList, appendFavorites, appendFollowers };
+module.exports = { slugify, appendCategoryList, appendFavorites, appendFollowers };

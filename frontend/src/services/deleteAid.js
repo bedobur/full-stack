@@ -1,12 +1,12 @@
 import axios from "axios";
 import errorHandler from "../helpers/errorHandler";
 
-async function deleteComment({ commentId, headers, slug }) {
+async function deleteAid({ slug, headers }) {
   try {
     const { data } = await axios({
       headers,
       method: "DELETE",
-      url: `api/aids/${slug}/comments/${commentId}`,
+      url: `api/aids/${slug}/`,
     });
 
     return data;
@@ -15,4 +15,4 @@ async function deleteComment({ commentId, headers, slug }) {
   }
 }
 
-export default deleteComment;
+export default deleteAid;

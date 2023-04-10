@@ -2,11 +2,11 @@ const { UnauthorizedError, NotFoundError } = require("../helper/customErrors");
 const {
   appendFollowers,
   appendFavorites,
-  appendTagList,
+  appendCategoryList,
 } = require("../helper/helpers");
-const { Article, Tag, User } = require("../models");
+const { Aid, Category, User } = require("../models");
 
-//*  Favorite/Unfavorite Article
+//*  Favorite/Unfavorite Aid
 const favoriteToggler = async (req, res, next) => {
   try {
     const { loggedUser } = req;
@@ -14,12 +14,12 @@ const favoriteToggler = async (req, res, next) => {
 
     const { slug } = req.params;
 
-    const article = await Article.findOne({
+    const aid = await Aid.findOne({
       where: { slug: slug },
       include: [
         {
-          model: Tag,
-          as: "tagList",
+          model: Category,
+          as: "categoryList",
           attributes: ["name"],
         },
         {
@@ -29,16 +29,16 @@ const favoriteToggler = async (req, res, next) => {
         },
       ],
     });
-    if (!article) throw new NotFoundError("Article");
+    if (!aid) throw new NotFoundError("Aid");
 
-    if (req.method === "POST") await article.addUser(loggedUser);
-    if (req.method === "DELETE") await article.removeUser(loggedUser);
+    if (req.method === "POST") await aid.addUser(loggedUser);
+    if (req.method === "DELETE") await aid.removeUser(loggedUser);
 
-    appendTagList(article.tagList, article);
-    await appendFollowers(loggedUser, article);
-    await appendFavorites(loggedUser, article);
+    appendCategoryList(aid.categoryList, aid);
+    await appendFollowers(loggedUser, aid);
+    await appendFavorites(loggedUser, aid);
 
-    res.json({ article });
+    res.json({ aid });
   } catch (error) {
     next(error);
   }

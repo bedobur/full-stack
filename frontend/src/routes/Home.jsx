@@ -4,7 +4,7 @@ import ContainerRow from "../components/ContainerRow";
 import FeedToggler from "../components/FeedToggler";
 import { useAuth } from "../context/AuthContext";
 import FeedProvider from "../context/FeedContext";
-import PopularTags from "./../components/PopularTags";
+import PopularCategories from "./../components/PopularCategories";
 
 function Home() {
   const { isAuth } = useAuth();
@@ -24,7 +24,7 @@ function Home() {
             <Outlet />
           </div>
 
-          <PopularTags />
+          <PopularCategories />
         </FeedProvider>
       </ContainerRow>
     </div>

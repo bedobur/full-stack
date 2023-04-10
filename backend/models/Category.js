@@ -1,42 +1,46 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Comment extends Model {
+  class Category extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Aid }) {
+    static associate({ Aid }) {
       // define association here
 
-      // Comments
-      this.belongsTo(Aid, { foreignKey: "aidId" });
-      this.belongsTo(User, { as: "author", foreignKey: "userId" });
+      // Category list
+      this.belongsToMany(Aid, {
+        through: "CategoryList",
+        foreignKey: "categoryName",
+        timestamps: false,
+      });
     }
 
     toJSON() {
       return {
         ...this.get(),
-        aidId: undefined,
+        id: undefined,
         userId: undefined,
+        CategoryList: undefined,
       };
     }
   }
-  Comment.init(
+  Category.init(
     {
-      id: {
+      name: {
+        type: DataTypes.STRING,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER,
       },
-      body: DataTypes.TEXT,
+
     },
     {
       sequelize,
-      modelName: "Comment",
+      modelName: "Category",
+      timestamps: false,
     },
   );
-  return Comment;
+  return Category;
 };

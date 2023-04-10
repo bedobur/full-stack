@@ -3,18 +3,19 @@ import ReactDOM from "react-dom";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import AuthProvider from "./context/AuthContext";
+import "./main.css";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import Article from "./routes/Article/Article";
-import CommentsSection from "./routes/Article/CommentsSection";
-import ArticleEditor from "./routes/ArticleEditor";
+import Aid from "./routes/Aid/Aid";
+import CommentsSection from "./routes/Aid/CommentsSection";
+import AidEditor from "./routes/AidEditor";
 import Home from "./routes/Home";
-import HomeArticles from "./routes/HomeArticles";
+import HomeAids from "./routes/HomeAids";
 import Login from "./routes/Login";
 import NotFound from "./routes/NotFound";
 import Profile from "./routes/Profile/Profile";
-import ProfileArticles from "./routes/Profile/ProfileArticles";
-import ProfileFavArticles from "./routes/Profile/ProfileFavArticles";
+import ProfileAids from "./routes/Profile/ProfileAids";
+import ProfileFavAids from "./routes/Profile/ProfileFavAids";
 import Settings from "./routes/Settings";
 import SignUp from "./routes/SignUp";
 
@@ -25,7 +26,7 @@ ReactDOM.render(
         <Routes>
           <Route element={<App />}>
             <Route path="/" element={<Home />}>
-              <Route index element={<HomeArticles />} />
+              <Route index element={<HomeAids />} />
             </Route>
 
             <Route path="login" element={<Login />} />
@@ -33,17 +34,17 @@ ReactDOM.render(
 
             <Route path="settings" element={<Settings />} />
 
-            <Route path="editor" element={<ArticleEditor />}>
-              <Route path=":slug" element={<ArticleEditor />} />
+            <Route path="editor" element={<AidEditor />}>
+              <Route path=":slug" element={<AidEditor />} />
             </Route>
 
-            <Route path="article/:slug" element={<Article />}>
+            <Route path="aid/:slug" element={<Aid />}>
               <Route index element={<CommentsSection />} />
             </Route>
 
             <Route path="profile/:username" element={<Profile />}>
-              <Route index element={<ProfileArticles />} />
-              <Route path="favorites" element={<ProfileFavArticles />} />
+              <Route index element={<ProfileAids />} />
+              <Route path="favorites" element={<ProfileFavAids />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />

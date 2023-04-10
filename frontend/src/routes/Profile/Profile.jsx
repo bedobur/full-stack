@@ -16,10 +16,10 @@ function Profile() {
 
       <ContainerRow>
         <div className="col-xs-12 col-md-10 offset-md-1">
-          <div className="articles-toggle">
+          <div className="aids-toggle">
             <ul className="nav nav-pills outline-active">
-              <NavItem text="My Articles" url="" state={state} />
-              <NavItem text="Favorited Articles" url="favorites" state={state} />
+              <NavItem text="My Aids" url="" state={state} />
+              <NavItem text="Favorited Aids" url="favorites" state={state} />
             </ul>
           </div>
           <Outlet />
