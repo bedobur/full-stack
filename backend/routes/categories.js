@@ -79,6 +79,21 @@ router.get("/select", async (req, res, next) => {
           },
         ],
       },
+      {
+        key: "other",
+        label: "Other",
+        icon: "pi pi-ellipsis-h",
+        children: [
+          {
+            key: "other_giver",
+            label: "Give",
+          },
+          {
+            key: "other_take",
+            label: "Take",
+          },
+        ],
+      },
     ];
 
     res.json(categories);
