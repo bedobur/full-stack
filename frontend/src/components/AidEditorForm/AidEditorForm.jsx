@@ -4,16 +4,22 @@ import { useAuth } from "../../context/AuthContext";
 import getAid from "../../services/getAid";
 import setAid from "../../services/setAid";
 import getCategoriesSelect from "../../services/getCategoriesSelect";
+import getSubcategoriesSelect from "../../services/getSubcategoriesSelect";
 import FormFieldset from "../FormFieldset";
+import { SelectButton } from 'primereact/selectbutton';
 import { TreeSelect } from "primereact/treeselect";
 
-const emptyForm = { title: "", description: "", body: "", categoryList: "" };
+const emptyForm = { type: null, title: "", description: "", body: "", categoryList: "" , subcategoryList: ""};
 var categories = [];
+var allSubcategories = null;
+var subcategories = [];
+
 getCategoriesSelect().then((res) => {categories = res.data});
+getSubcategoriesSelect().then((res) => {allSubcategories = res.data});
 
 function AidEditorForm() {
   const { state } = useLocation();
-  const [{ title, description, body, categoryList }, setForm] = useState(
+  const [{ type, title, description, body, categoryList,  subcategoryList}, setForm] = useState(
     state || emptyForm
   );
   const [errorMessage, setErrorMessage] = useState("");
@@ -29,10 +35,10 @@ function AidEditorForm() {
     if (state || !slug) return;
 
     getAid({ headers, slug })
-      .then(({ author: { username }, body, description, categoryList, title }) => {
+      .then(({ author: { username }, body, description, categoryList, subcategoryList, title, type}) => {
         if (username !== loggedUser.username) redirect();
 
-        setForm({ body, description, categoryList, title });
+        setForm({ body, description, categoryList, subcategoryList, title , type});
       })
       .catch(console.error);
 
@@ -40,22 +46,30 @@ function AidEditorForm() {
   }, [headers, isAuth, loggedUser.username, navigate, slug, state]);
 
   const inputHandler = (e) => {
-    const type = e.target.name;
+    const key = e.target.name;
     const value = e.target.value;
 
-    setForm((form) => ({ ...form, [type]: value }));
+    setForm((form) => ({ ...form, [key]: value }));
   };
 
   const categoriesInputHandler = (e) => {
     const value = e.target.value;
+    subcategories = allSubcategories[value]
 
     setForm((form) => ({ ...form, categoryList: value.split(/,| /) }));
   };
 
+  const subcategoriesInputHandler = (e) => {
+    const value = e.target.value;
+
+    setForm((form) => ({ ...form, subcategoryList: value.split(/,| /) }));
+  };
+
   const formSubmit = (e) => {
     e.preventDefault();
+    if (type==="") return;
 
-    setAid({ headers, slug, body, description, categoryList, title })
+    setAid({ headers, slug, body, description, categoryList, subcategoryList, title , type})
       .then((slug) => navigate(`/aid/${slug}`))
       .catch(setErrorMessage);
   };
@@ -63,7 +77,41 @@ function AidEditorForm() {
   return (
     <form onSubmit={formSubmit}>
       <fieldset>
-        {errorMessage && <span className="error-messages">{errorMessage}</span>}
+        <fieldset className="form-group">
+          {errorMessage && <span className="error-messages">{errorMessage}</span>}
+        </fieldset>
+        
+        <fieldset className="form-group">
+          <SelectButton name="type" required value={type} onChange={inputHandler} options={['Provide', 'Request']} className={type===""?"p-invalid":""}/>
+        </fieldset>
+
+        <fieldset className="form-group">
+          <TreeSelect
+            filter
+            placeholder="Aid Category"  
+            name="categories"
+            value={categoryList}
+            onChange={categoriesInputHandler}
+            options={categories}
+            className="form-control"
+            required
+          />
+        </fieldset>
+
+        <fieldset className="form-group">
+          <TreeSelect
+            filter
+            disabled={!categoryList}
+            placeholder="Aid Subcategory"
+            name="categories"
+            value={subcategoryList}
+            onChange={subcategoriesInputHandler}
+            options={subcategories}
+            className="form-control"
+            required
+          />
+        </fieldset>
+
         <FormFieldset
           placeholder="Aid Title"
           name="title"
@@ -102,21 +150,6 @@ function AidEditorForm() {
         >
           <div className="category-list"></div>
         </FormFieldset>*/}
-
-        <fieldset className="form-group">
-          <TreeSelect
-            filter
-            placeholder="Enter category"
-            name="categories"
-            value={categoryList}
-            onChange={categoriesInputHandler}
-            options={categories}
-            //handler={categoriesInputHandler}
-            className="form-control"
-            //required
-          />
-          <div className="category-list"></div>
-        </fieldset>
 
         <button className="btn btn-lg pull-xs-right btn-primary" type="submit">
           {slug ? "Update Aid" : "Publish Aid"}

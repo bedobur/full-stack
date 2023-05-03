@@ -10,6 +10,7 @@ const userRoutes = require("./routes/user");
 const aidsRoutes = require("./routes/aids");
 const profilesRoutes = require("./routes/profiles");
 const categoriesRoutes = require("./routes/categories");
+const subcategoriesRoutes = require("./routes/subcategories");
 
 const app = express();
 app.use(cors());
@@ -34,6 +35,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/aids", aidsRoutes);
 app.use("/api/profiles", profilesRoutes);
 app.use("/api/categories", categoriesRoutes);
+app.use("/api/subcategories", subcategoriesRoutes);
 app.get("*", (req, res) =>
   res.status(404).json({ errors: { body: ["Not found"] } }),
 );

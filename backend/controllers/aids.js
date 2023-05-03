@@ -1,6 +1,3 @@
-const Sequelize = require("sequelize");
-const Op = Sequelize.Op;
-
 const {
   AlreadyTakenError,
   FieldRequiredError,
@@ -12,12 +9,14 @@ const {
   appendFollowers,
   appendFavorites,
   appendCategoryList,
+  appendSubcategoryList,
   slugify,
 } = require("../helper/helpers");
-const { Aid, Category, User } = require("../models");
+const { Aid, Category, Subcategory, User } = require("../models");
 
 const includeOptions = [
   { model: Category, as: "categoryList", attributes: ["name"] },
+  { model: Subcategory, as: "subcategoryList", attributes: ["name"] },
   { model: User, as: "author", attributes: { exclude: ["email"] } },
 ];
 
@@ -46,6 +45,7 @@ const allAids = async (req, res, next) => {
       offset: offset * limit,
       order: [["createdAt", "DESC"]],
     };
+    if(filter) searchOptions.where = { type: filter };
 
     let aids = { rows: [], count: 0 };
     if (favorited) {
@@ -59,8 +59,10 @@ const allAids = async (req, res, next) => {
 
     for (let aid of aids.rows) {
       const aidCategories = await aid.getCategoryList();
+      const aidSubcategories = await aid.getSubcategoryList();
 
       appendCategoryList(aidCategories, aid);
+      appendSubcategoryList(aidSubcategories, aid);
       await appendFollowers(loggedUser, aid);
       await appendFavorites(loggedUser, aid);
 
@@ -79,17 +81,19 @@ const createAid = async (req, res, next) => {
     const { loggedUser } = req;
     if (!loggedUser) throw new UnauthorizedError();
 
-    const { title, description, body, categoryList } = req.body.aid;
+    const { type, title, description, body, categoryList , subcategoryList} = req.body.aid;
+    if(!type) throw new FieldRequiredError("A type");
     if (!title) throw new FieldRequiredError("A title");
     if (!description) throw new FieldRequiredError("A description");
     if (!body) throw new FieldRequiredError("An aid body");
 
     const slug = slugify(title);
-    //const slugInDB = await Aid.findOne({ where: { slug: slug } });
-    //if (slugInDB) throw new AlreadyTakenError("Title");
+    const slugInDB = await Aid.findOne({ where: { slug: slug } });
+    if (slugInDB) throw new AlreadyTakenError("Title");
 
     const aid = await Aid.create({
       slug: slug,
+      type: type,
       title: title,
       description: description,
       body: body,
@@ -107,9 +111,22 @@ const createAid = async (req, res, next) => {
       }
     }
 
+    for (const subcategory of subcategoryList) {
+      const subcategoryInDB = await Subcategory.findByPk(subcategory.trim());
+
+      if (subcategoryInDB) {
+        await aid.addSubcategoryList(subcategoryInDB);
+      } else if (subcategory.length > 2) {
+        const newSubcategory = await Subcategory.create({ name: subcategory.trim() });
+
+        await aid.addSubcategoryList(newSubcategory);
+      }
+    }
+
     delete loggedUser.dataValues.token;
 
     aid.dataValues.categoryList = categoryList;
+    aid.dataValues.subcategoryList = subcategoryList;
     aid.setAuthor(loggedUser);
     aid.dataValues.author = loggedUser;
     await appendFollowers(loggedUser, loggedUser);
@@ -140,8 +157,10 @@ const aidsFeed = async (req, res, next) => {
 
     for (const aid of aids.rows) {
       const aidCategories = await aid.getCategoryList();
+      const aidSubcategories = await aid.getSubcategoryList();
 
       appendCategoryList(aidCategories, aid);
+      appendSubcategoryList(aidSubcategories, aid);
       await appendFollowers(loggedUser, aid);
       await appendFavorites(loggedUser, aid);
     }
@@ -165,6 +184,7 @@ const singleAid = async (req, res, next) => {
     if (!aid) throw new NotFoundError("Aid");
 
     appendCategoryList(aid.categoryList, aid);
+    appendSubcategoryList(aid.subcategoryList, aid);
     await appendFollowers(loggedUser, aid);
     await appendFavorites(loggedUser, aid);
 
@@ -191,7 +211,8 @@ const updateAid = async (req, res, next) => {
       throw new ForbiddenError("aid");
     }
 
-    const { title, description, body } = req.body.aid;
+    const { type, title, description, body } = req.body.aid;
+    if(type) aid.type = type;
     if (title) {
       aid.slug = slugify(title);
       aid.title = title;
@@ -201,6 +222,7 @@ const updateAid = async (req, res, next) => {
     await aid.save();
 
     appendCategoryList(aid.categoryList, aid);
+    appendCategoryList(aid.subcategoryList, aid);
     await appendFollowers(loggedUser, aid);
     await appendFavorites(loggedUser, aid);
 

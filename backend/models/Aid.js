@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Category, Comment }) {
+    static associate({ User, Category, Subcategory, Comment }) {
       // define association here
 
       // Users
@@ -23,6 +23,15 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "aidId",
         timestamps: false,
         onDelete: "cascade", // FIXME: delete categories
+      });
+
+      // Subcategory list
+      this.belongsToMany(Subcategory, {
+        through: "SubcategoryList",
+        as: "subcategoryList",
+        foreignKey: "aidId",
+        timestamps: false,
+        onDelete: "cascade", // FIXME: delete subcategories
       });
 
       // Favorites
@@ -44,6 +53,7 @@ module.exports = (sequelize, DataTypes) => {
   Aid.init(
     {
       slug: DataTypes.STRING,
+      type: DataTypes.STRING,
       title: DataTypes.STRING,
       description: DataTypes.TEXT,
       body: DataTypes.TEXT,

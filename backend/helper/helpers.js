@@ -9,6 +9,13 @@ const appendCategoryList = (aidCategories, aid) => {
   aid.dataValues.categoryList = categoryList;
 };
 
+const appendSubcategoryList = (aidSubcategories, aid) => {
+  const subcategoryList = aidSubcategories.map((subcategory) => subcategory.name);
+
+  if (!aid) return subcategoryList;
+  aid.dataValues.subcategoryList = subcategoryList;
+};
+
 const appendFavorites = async (loggedUser, aid) => {
   const favorited = await aid.hasUser(loggedUser ? loggedUser : null);
   aid.dataValues.favorited = loggedUser ? favorited : false;
@@ -39,4 +46,4 @@ const appendFollowers = async (loggedUser, toAppend) => {
   }
 };
 
-module.exports = { slugify, appendCategoryList, appendFavorites, appendFollowers };
+module.exports = { slugify, appendCategoryList, appendSubcategoryList, appendFavorites, appendFollowers };

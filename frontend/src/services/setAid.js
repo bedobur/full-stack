@@ -1,10 +1,10 @@
 import axios from "axios";
 import errorHandler from "../helpers/errorHandler";
 
-async function setAid({ body, description, headers, slug, categoryList, title }) {
+async function setAid({ body, description, headers, slug, categoryList, subcategoryList, title , type}) {
   try {
     const { data } = await axios({
-      data: { aid: { title, description, body, categoryList } },
+      data: { aid: { type, title, description, body, categoryList, subcategoryList} },
       headers,
       method: slug ? "PUT" : "POST",
       url: slug ? `api/aids/${slug}` : "api/aids",

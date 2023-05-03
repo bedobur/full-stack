@@ -16,69 +16,38 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// Categories by Category
 router.get("/select", async (req, res, next) => {
   try {
     const categories = [
       {
         key: "shelter",
-        label: "Shelter",
-        icon: "pi pi-home",
-        children: [
-          {
-            key: "shelter_giver",
-            label: "Give Shelter",
-          },
-          {
-            key: "shelter_taker",
-            label: "Take Shelter",
-          },
-        ],
+        label: "Shelter"
       },
       {
         key: "medicine",
-        label: "Medicine",
-        icon: "pi pi-heart",
-        children: [
-          {
-            key: "medicine_giver",
-            label: "Give Medicine",
-          },
-          {
-            key: "medicine_taker",
-            label: "Take Medicine",
-          },
-        ],
+        label: "Medicine"
       },
       {
         key: "food",
-        label: "Food",
-        icon: "pi pi-shopping-cart",
-        children: [
-          {
-            key: "food_giver",
-            label: "Give Food",
-          },
-          {
-            key: "food_taker",
-            label: "Take Food",
-          },
-        ],
+        label: "Food"
       },
       {
         key: "clothes",
-        label: "Clothes",
-        icon: "pi pi-cart-plus",
-        children: [
-          {
-            key: "clothes_giver",
-            label: "Give Clothes",
-          },
-          {
-            key: "clothes_taker",
-            label: "Take Clothes",
-          },
-        ],
+        label: "Clothes"
       },
+      {
+        key: "household-appliances",
+        label: "Household Appliances"
+      },
+      {
+        key: "furniture",
+        label: "Furniture"
+      },
+      {
+        key: "others",
+        label: "Others"
+      }
     ];
 
     res.json(categories);
