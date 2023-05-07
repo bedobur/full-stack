@@ -11,8 +11,9 @@ import { TreeSelect } from "primereact/treeselect";
 
 const emptyForm = { type: null, title: "", description: "", body: "", categoryList: "" , subcategoryList: ""};
 var categories = [];
-var allSubcategories = null;
+var allSubcategories = {};
 var subcategories = [];
+var subcategoryListDict = {};
 
 getCategoriesSelect().then((res) => {categories = res.data});
 getSubcategoriesSelect().then((res) => {allSubcategories = res.data});
@@ -61,13 +62,18 @@ function AidEditorForm() {
 
   const subcategoriesInputHandler = (e) => {
     const value = e.target.value;
+    subcategoryListDict = value;
 
-    setForm((form) => ({ ...form, subcategoryList: value.split(/,| /) }));
+    setForm((form) => ({ ...form, subcategoryList: Object.keys(value)}));
   };
 
   const formSubmit = (e) => {
     e.preventDefault();
-    if (type==="") return;
+
+    if (!type || !subcategoryList.length || !subcategoryList.length) {
+      setErrorMessage("Please fill all the fields");
+      return
+    };
 
     setAid({ headers, slug, body, description, categoryList, subcategoryList, title , type})
       .then((slug) => navigate(`/aid/${slug}`))
@@ -104,7 +110,9 @@ function AidEditorForm() {
             disabled={!categoryList}
             placeholder="Aid Subcategory"
             name="categories"
-            value={subcategoryList}
+            selectionMode="multiple"
+            metaKeySelection={false}
+            value={subcategoryListDict}
             onChange={subcategoriesInputHandler}
             options={subcategories}
             className="form-control"
@@ -140,16 +148,6 @@ function AidEditorForm() {
             onChange={inputHandler}
           ></textarea>
         </fieldset>
-
-        {/*<FormFieldset
-          normal
-          placeholder="Enter categories"
-          name="categories"
-          value={categoryList}
-          handler={categoriesInputHandler}
-        >
-          <div className="category-list"></div>
-        </FormFieldset>*/}
 
         <button className="btn btn-lg pull-xs-right btn-primary" type="submit">
           {slug ? "Update Aid" : "Publish Aid"}

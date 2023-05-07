@@ -41,9 +41,9 @@ function AidsPreview({ aids, loading, updateAids }) {
       );
     })
   ) : loading ? (
-    <div className="aid-preview">Loading aid...</div>
+    <div className="aid-preview">Loading aid forms...</div>
   ) : (
-    <div className="aid-preview">No aids available.</div>
+    <div className="aid-preview">No aid form available.</div>
   );
 }
 

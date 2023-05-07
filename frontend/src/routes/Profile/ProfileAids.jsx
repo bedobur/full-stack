@@ -13,7 +13,7 @@ function ProfileAids() {
 
   return loading ? (
     <div className="aid-preview">
-      <em>Loading {username} aids...</em>
+      <em>Loading {username} aid forms...</em>
     </div>
   ) : aids.length > 0 ? (
     <>
@@ -31,7 +31,7 @@ function ProfileAids() {
       />
     </>
   ) : (
-    <div className="aid-preview">{username} doesn't have aids.</div>
+    <div className="aid-preview">{username} doesn't have aid forms.</div>
   );
 }
 

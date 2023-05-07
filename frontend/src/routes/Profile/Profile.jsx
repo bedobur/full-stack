@@ -18,8 +18,8 @@ function Profile() {
         <div className="col-xs-12 col-md-10 offset-md-1">
           <div className="aids-toggle">
             <ul className="nav nav-pills outline-active">
-              <NavItem text="My Aids" url="" state={state} />
-              <NavItem text="Favorited Aids" url="favorites" state={state} />
+              <NavItem text="My Aid Forms" url="" state={state} />
+              <NavItem text="Favorited Aid Forms" url="favorites" state={state} />
             </ul>
           </div>
           <Outlet />

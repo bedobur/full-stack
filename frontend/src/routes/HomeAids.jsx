@@ -14,7 +14,7 @@ function HomeAids() {
 
   return loading ? (
     <div className="aid-preview">
-      <em>Loading aids list...</em>
+      <em>Loading aid form list...</em>
     </div>
   ) : aids.length > 0 ? (
     <>
@@ -32,7 +32,7 @@ function HomeAids() {
       />
     </>
   ) : (
-    <div className="aid-preview">Aids not available.</div>
+    <div className="aid-preview">Aid forms not available.</div>
   );
 }
 

@@ -13,7 +13,7 @@ function ProfileFavAids() {
 
   return loading ? (
     <div className="aid-preview">
-      <em>Loading {username} favorites aids...</em>
+      <em>Loading {username} favorites aid forms...</em>
     </div>
   ) : aids.length > 0 ? (
     <>
