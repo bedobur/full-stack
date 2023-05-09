@@ -1,40 +1,27 @@
 "use strict";
 const { Model } = require("sequelize");
+const { search } = require("@orama/orama");
+
 module.exports = (sequelize, DataTypes) => {
   class Aid extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate({ User, Category, Subcategory, Comment }) {
       // define association here
-
-      // Users
       this.belongsTo(User, { foreignKey: "userId", as: "author" });
-
-      // Comments
       this.hasMany(Comment, { foreignKey: "aidId", onDelete: "cascade" });
-
-      // Category list
       this.belongsToMany(Category, {
         through: "CategoryList",
         as: "categoryList",
         foreignKey: "aidId",
         timestamps: false,
-        onDelete: "cascade", // FIXME: delete categories
+        onDelete: "cascade",
       });
-
-      // Subcategory list
       this.belongsToMany(Subcategory, {
         through: "SubcategoryList",
         as: "subcategoryList",
         foreignKey: "aidId",
         timestamps: false,
-        onDelete: "cascade", // FIXME: delete subcategories
+        onDelete: "cascade",
       });
-
-      // Favorites
       this.belongsToMany(User, {
         through: "Favorites",
         foreignKey: "aidId",
@@ -49,6 +36,15 @@ module.exports = (sequelize, DataTypes) => {
         userId: undefined,
       };
     }
+
+    static async search(query) {
+      const result = await search({
+        index: "Aid",
+        q: query,
+        properties: "*",
+      });
+      return result;
+    }
   }
   Aid.init(
     {
@@ -61,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Aid",
-    },
+    }
   );
   return Aid;
 };

@@ -8,6 +8,7 @@ function useAids({ location, tabName, categoryName, username }) {
     aidsCount: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const { headers } = useAuth();
 
   useEffect(() => {
@@ -21,7 +22,15 @@ function useAids({ location, tabName, categoryName, username }) {
       .finally(() => setLoading(false));
   }, [headers, location, tabName, categoryName, username]);
 
-  return { aids, aidsCount, loading, setAidsData };
+  const searchAids = (query) => {
+    setSearchQuery(query);
+  };
+
+  const filteredAids = aids.filter((aid) =>
+    aid.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return { aids: filteredAids, aidsCount, loading, setAidsData, searchAids };
 }
 
 export default useAids;
