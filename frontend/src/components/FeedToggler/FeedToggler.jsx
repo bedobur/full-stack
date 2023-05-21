@@ -14,6 +14,7 @@ function FeedToggler() {
         <FeedNavLink name="provider" text="Aid Providers" />
         <FeedNavLink name="requester" text="Aid Requesters" />
         {tabName === "category" && <FeedNavLink icon name="category" text={categoryName} />}
+        {isAuth && <FeedNavLink name="matched" text="Matched Aids" />}
       </ul>
     </div>
   );

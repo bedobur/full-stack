@@ -25,7 +25,7 @@ const allAids = async (req, res, next) => {
   try {
     const { loggedUser } = req;
 
-    const { author, category, filter, favorited, limit = 3, offset = 0 } = req.query;
+    const { author, category, filter, favorited, limit = 3, offset = 0 , matched} = req.query;
     const searchOptions = {
       include: [
         {
@@ -46,6 +46,18 @@ const allAids = async (req, res, next) => {
       order: [["createdAt", "DESC"]],
     };
     if(filter) searchOptions.where = { type: filter };
+    if(matched) {
+      /* 
+      !!!!!!!!!! MOST IMPORTANT TODO!!!!!!!!!!
+      
+      FILTER ALL AIDS ACORDING TO MATCHING ALGORITHM
+
+      USE SEQUALIZE QUERY LANGUAGE TO FILTER AIDS
+      https://sequelize.org/master/manual/model-querying-basics.html#operators
+
+      Or use js to filter aids after fetching them from DB below Aid.findAndCountAll() method
+      */
+    }
 
     let aids = { rows: [], count: 0 };
     if (favorited) {
