@@ -9,11 +9,16 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} />
-      <button type="submit">Search</button>
+    <form onSubmit={handleSubmit} style={{display: "flex", flexWrap: "wrap", justifyContent: "right"}}>
+      <input className='form-control'
+        style={{width: "50%"}}
+        type="text"
+        placeholder="Aid Title"
+        name="description" value={query} onChange={(e) => setQuery(e.target.value)} />
+      <button className='btn pull-xs-right' type="submit">Search</button>
     </form>
   );
+  
 }
 
 export default SearchBar;
