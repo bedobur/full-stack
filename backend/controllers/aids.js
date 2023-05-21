@@ -81,11 +81,12 @@ const createAid = async (req, res, next) => {
     const { loggedUser } = req;
     if (!loggedUser) throw new UnauthorizedError();
 
-    const { type, title, description, body, categoryList , subcategoryList} = req.body.aid;
+    const { type, title, description, body, categoryList , subcategoryList, location} = req.body.aid;
     if(!type) throw new FieldRequiredError("A type");
     if (!title) throw new FieldRequiredError("A title");
     if (!description) throw new FieldRequiredError("A description");
     if (!body) throw new FieldRequiredError("An aid body");
+    if (!location) throw new FieldRequiredError("A location");
 
     const slug = slugify(title);
     const slugInDB = await Aid.findOne({ where: { slug: slug } });
@@ -97,6 +98,7 @@ const createAid = async (req, res, next) => {
       title: title,
       description: description,
       body: body,
+      location: location,
     });
 
     for (const category of categoryList) {
@@ -211,7 +213,7 @@ const updateAid = async (req, res, next) => {
       throw new ForbiddenError("aid");
     }
 
-    const { type, title, description, body } = req.body.aid;
+    const { type, title, description, body, location} = req.body.aid;
     if(type) aid.type = type;
     if (title) {
       aid.slug = slugify(title);
@@ -219,6 +221,8 @@ const updateAid = async (req, res, next) => {
     }
     if (description) aid.description = description;
     if (body) aid.body = body;
+    if (location) aid.location = location;
+
     await aid.save();
 
     appendCategoryList(aid.categoryList, aid);
