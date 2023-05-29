@@ -34,7 +34,9 @@ function AidsPreview({ aids, loading, updateAids }) {
           >
             <h1>{aid.title}</h1>
             <p>{aid.description}</p>
-            <span>Read more...</span>
+            <h5>{aid.type}</h5>
+            <h5>{aid.subcategoryList.join(', ')}</h5>
+            <h5>{aid.location}</h5>
             <AidCategories categoryList={aid.categoryList} />
           </Link>
         </div>
