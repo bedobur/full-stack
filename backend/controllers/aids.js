@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const {
   AlreadyTakenError,
   FieldRequiredError,
@@ -19,6 +20,15 @@ const includeOptions = [
   { model: Subcategory, as: "subcategoryList", attributes: ["name"] },
   { model: User, as: "author", attributes: { exclude: ["email"] } },
 ];
+
+function isSubList(list, sublist) {
+  for (const item of sublist) {
+    if (!list.includes(item)) {
+      return false;
+    }
+  }
+  return true;
+}
 
 //? All Aids - by Author/by Category/Favorited by user
 const allAids = async (req, res, next) => {
@@ -46,18 +56,6 @@ const allAids = async (req, res, next) => {
       order: [["createdAt", "DESC"]],
     };
     if(filter) searchOptions.where = { type: filter };
-    if(matched) {
-      /* 
-      !!!!!!!!!! MOST IMPORTANT TODO!!!!!!!!!!
-      
-      FILTER ALL AIDS ACORDING TO MATCHING ALGORITHM
-
-      USE SEQUALIZE QUERY LANGUAGE TO FILTER AIDS
-      https://sequelize.org/master/manual/model-querying-basics.html#operators
-
-      Or use js to filter aids after fetching them from DB below Aid.findAndCountAll() method
-      */
-    }
 
     let aids = { rows: [], count: 0 };
     if (favorited) {
@@ -81,7 +79,49 @@ const allAids = async (req, res, next) => {
       delete aid.dataValues.Favorites;
     }
 
-    res.json({ aids: aids.rows, aidsCount: aids.count });
+    if(matched) {
+      let userAids = {...aids};
+
+      searchOptions.include[1].where = { username: {[Op.not]: loggedUser?.username} };
+
+      aids = { rows: [], count: 0 };
+      if (favorited) {
+        const user = await User.findOne({ where: { username: favorited } });
+
+        aids.rows = await user.getFavorites(searchOptions);
+        aids.count = await user.countFavorites();
+      } else {
+        aids = await Aid.findAndCountAll(searchOptions);
+      }
+
+      for (let aid of aids.rows) {
+        const aidCategories = await aid.getCategoryList();
+        const aidSubcategories = await aid.getSubcategoryList();
+
+        appendCategoryList(aidCategories, aid);
+        appendSubcategoryList(aidSubcategories, aid);
+        await appendFollowers(loggedUser, aid);
+        await appendFavorites(loggedUser, aid);
+
+      delete aid.dataValues.Favorites;
+    }
+
+      userAids = JSON.parse(JSON.stringify(userAids.rows))
+      aids = JSON.parse(JSON.stringify(aids.rows))
+
+      let matchedAids = new Set();
+
+      for(let userAid of userAids) {
+        for(let aid of aids){
+          if(aid.type !== userAid.type && aid.categoryList[0].name === userAid.categoryList[0].name && isSubList(aid.subcategoryList, userAid.subcategoryList)){
+            matchedAids.add(aid);
+          }
+        }
+      }
+      matchedAids = [...matchedAids]
+      res.json({ aids: matchedAids, aidsCount: matchedAids.length });
+    }
+    else res.json({ aids: aids.rows, aidsCount: aids.count });
   } catch (error) {
     next(error);
   }

@@ -33,7 +33,7 @@ function Aid() {
         <h1>{title}</h1>
         <p>{aid.description}</p>
         <h5>{aid.type}</h5>
-        <h5>{aid.subcategoryList.join(', ')}</h5>
+        <h5>{aid.subcategoryList?.join(', ')}</h5>
         <h5>{aid.location}</h5>
         <AidMeta author={author} createdAt={createdAt}>
           <AidsButtons aid={aid} setAid={setAid} />

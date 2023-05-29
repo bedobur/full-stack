@@ -12,7 +12,7 @@ async function getAids({ headers, limit = 3, location, page = 0, categoryName, u
       provider: `api/aids?filter=Provide&&limit=${limit}&&offset=${page}`,
       requester: `api/aids?filter=Request&&limit=${limit}&&offset=${page}`,
       category: `api/aids?category=${categoryName}&&limit=${limit}&&offset=${page}`,
-      matched: `api/aids?matched=${username}&&limit=${limit}&&offset=${page}`,
+      matched: `api/aids?author=${username}&&matched=1&&limit=${limit}&&offset=${page}`,
     };
 
     const { data } = await axios({ url: url[location], headers });
