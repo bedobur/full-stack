@@ -80,7 +80,7 @@ const allAids = async (req, res, next) => {
     }
 
     if(matched) {
-      let userAids = {...aids};
+      let userAids = JSON.parse(JSON.stringify(aids.rows)); // User's own aids
 
       searchOptions.include[1].where = { username: {[Op.not]: loggedUser?.username} };
 
@@ -106,19 +106,39 @@ const allAids = async (req, res, next) => {
       delete aid.dataValues.Favorites;
     }
 
-      userAids = JSON.parse(JSON.stringify(userAids.rows))
-      aids = JSON.parse(JSON.stringify(aids.rows))
+      let otherAids = JSON.parse(JSON.stringify(aids.rows)) // Aids from other users
+      
+      /*
+      **  !!!!!!!!!!!!!!!!!!!!! MATCHING ALGORITHM STARTS HERE !!!!!!!!!!!!!!!!!!!!!
+      */
 
       let matchedAids = new Set();
 
       for(let userAid of userAids) {
-        for(let aid of aids){
-          if(aid.type !== userAid.type && aid.categoryList[0].name === userAid.categoryList[0].name && isSubList(aid.subcategoryList, userAid.subcategoryList)){
-            matchedAids.add(aid);
+        for(let otherAid of otherAids){
+          if(otherAid.type === userAid.type || otherAid.categoryList[0].name !== userAid.categoryList[0].name /*|| otherAid.location !== userAid.location*/) continue;
+          
+          let list, subList;
+          if(otherAid.type === 'Provide') {
+            list = otherAid.subcategoryList;
+            subList = userAid.subcategoryList;
+          } else {
+            list = userAid.subcategoryList;
+            subList = otherAid.subcategoryList;
+          }
+
+          if(isSubList(list, subList)){
+            matchedAids.add(otherAid);
           }
         }
       }
+
       matchedAids = [...matchedAids]
+
+      /*
+      **  !!!!!!!!!!!!!!!!!!!!! MATCHING ALGORITHM ENDS HERE !!!!!!!!!!!!!!!!!!!!!
+      */
+
       res.json({ aids: matchedAids, aidsCount: matchedAids.length });
     }
     else res.json({ aids: aids.rows, aidsCount: aids.count });

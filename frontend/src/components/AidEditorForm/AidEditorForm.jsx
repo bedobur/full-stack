@@ -58,6 +58,7 @@ function AidEditorForm() {
   const categoriesInputHandler = (e) => {
     const value = e.target.value;
     subcategories = allSubcategories[value]
+    subcategoryListDict = {};
 
     setForm((form) => ({ ...form, categoryList: value.split(/,| /) }));
   };
