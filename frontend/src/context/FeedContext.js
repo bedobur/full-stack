@@ -10,12 +10,12 @@ export function useFeedContext() {
 function FeedProvider({ children }) {
   const { isAuth } = useAuth();
   const [{ tabName, categoryName }, setTab] = useState({
-    tabName: isAuth ? "feed" : "global",
+    tabName: isAuth ? "matched" : "global",
     categoryName: "",
   });
 
   useEffect(() => {
-    setTab((tab) => ({ ...tab, tabName: isAuth ? "feed" : "global" }));
+    setTab((tab) => ({ ...tab, tabName: isAuth ? "matched" : "global" }));
   }, [isAuth]);
 
   const changeTab = async (e, tabName) => {

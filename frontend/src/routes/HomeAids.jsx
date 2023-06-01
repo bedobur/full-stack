@@ -3,7 +3,7 @@ import AidsPreview from "../components/AidsPreview";
 import { useFeedContext } from "../context/FeedContext";
 import { useAuth } from "../context/AuthContext";
 import useAidList from "../hooks/useAids";
-import SearchBar from "../components/SearchBar";
+//import SearchBar from "../components/SearchBar";
 
 
 function HomeAids() {
@@ -12,7 +12,7 @@ function HomeAids() {
   const {loggedUser} = useAuth();
   const username = loggedUser.username;
 
-  const { aids, aidsCount, loading, setAidsData, searchAids } = useAidList({
+  const { aids, aidsCount, loading, setAidsData/*, searchAids */} = useAidList({
     location: tabName,
     tabName,
     categoryName,
@@ -25,7 +25,7 @@ function HomeAids() {
     </div>
   ) : (
     <>
-      <SearchBar onSearch={searchAids} />
+      {/* <SearchBar onSearch={searchAids} /> */}
       {aids.length > 0 ? (
         <>
           
