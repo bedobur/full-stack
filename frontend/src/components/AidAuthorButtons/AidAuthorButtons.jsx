@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import deleteAid from "../../services/deleteAid";
 
-function AidAuthorButtons({ body, description, slug, categoryList, title }) {
+function AidAuthorButtons({ body, description, slug, categoryList, subcategoryList, title, type, location }) {
   const { headers, isAuth } = useAuth();
   const navigate = useNavigate();
 
@@ -29,7 +29,6 @@ function AidAuthorButtons({ body, description, slug, categoryList, title }) {
       <button className="btn btn-sm" style={{ color: "#777" }}>
         <Link
           className="nav-link"
-          state={{ body, description, categoryList, title }}
           to={`/editor/${slug}`}
         >
           <i className="ion-edit"></i> Edit Aid

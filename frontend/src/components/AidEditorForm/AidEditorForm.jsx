@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import getAid from "../../services/getAid";
 import setAid from "../../services/setAid";
@@ -11,19 +11,17 @@ import { TreeSelect } from "primereact/treeselect";
 import { Tooltip } from 'antd';
 import TurkeyMap from 'turkey-map-react';
 
-const emptyForm = { type: "", title: "", description: "", body: "", categoryList: "" , subcategoryList: "", location: ""};
+const emptyForm = { type: "", title: "", description: "", body: "", categoryList: "" , subcategoryList: "", location: "", subcategoryListDict: {}, disableCategories: false};
 var categories = [];
 var allSubcategories = {};
 var subcategories = [];
-var subcategoryListDict = {};
 
 getCategoriesSelect().then((res) => {categories = res.data});
 getSubcategoriesSelect().then((res) => {allSubcategories = res.data});
 
 function AidEditorForm() {
-  const { state } = useLocation();
-  const [{ type, title, description, body, categoryList,  subcategoryList, location}, setForm] = useState(
-    state || emptyForm
+  const [{ type, title, description, body, categoryList, subcategoryList, location, subcategoryListDict, disableCategories}, setForm] = useState(
+    emptyForm
   );
   const [errorMessage, setErrorMessage] = useState("");
   const { isAuth, headers, loggedUser } = useAuth();
@@ -35,18 +33,19 @@ function AidEditorForm() {
     const redirect = () => navigate("/", { replace: true, state: null });
     if (!isAuth) return redirect();
 
-    if (state || !slug) return;
+    if (!slug) return;
 
     getAid({ headers, slug })
       .then(({ author: { username }, body, description, categoryList, subcategoryList, title, type, location}) => {
         if (username !== loggedUser.username) redirect();
-
-        setForm({ body, description, categoryList, subcategoryList, title , type, location});
+        
+        subcategories = allSubcategories[categoryList[0]]
+        setForm({ body, description, categoryList, subcategoryList, subcategoryListDict: Object.assign({}, ...subcategoryList.map((x) => ({[x]: true}))), title , type, location, disableCategories: true});
       })
       .catch(console.error);
 
     return () => setForm(emptyForm);
-  }, [headers, isAuth, loggedUser.username, navigate, slug, state]);
+  }, [headers, isAuth, loggedUser.username, navigate, slug]);
 
   const inputHandler = (e) => {
     const key = e.target.name;
@@ -58,16 +57,14 @@ function AidEditorForm() {
   const categoriesInputHandler = (e) => {
     const value = e.target.value;
     subcategories = allSubcategories[value]
-    subcategoryListDict = {};
 
-    setForm((form) => ({ ...form, categoryList: value.split(/,| /) }));
+    setForm((form) => ({ ...form, categoryList: value.split(/,| /) , subcategoryListDict: {}}));
   };
 
   const subcategoriesInputHandler = (e) => {
     const value = e.target.value;
-    subcategoryListDict = value;
 
-    setForm((form) => ({ ...form, subcategoryList: Object.keys(value)}));
+    setForm((form) => ({ ...form, subcategoryListDict: value, subcategoryList: Object.keys(value)}));
   };
 
   const formSubmit = (e) => {
@@ -103,6 +100,7 @@ function AidEditorForm() {
         <fieldset className="form-group">
           <TreeSelect
             filter
+            disabled={disableCategories}
             placeholder="Aid Category"  
             name="categories"
             value={categoryList}
@@ -116,9 +114,9 @@ function AidEditorForm() {
         <fieldset className="form-group">
           <TreeSelect
             filter
-            disabled={!categoryList}
+            disabled={disableCategories || !categoryList}
             placeholder="Aid Subcategory"
-            name="categories"
+            name="subcategories"
             selectionMode="multiple"
             metaKeySelection={false}
             value={subcategoryListDict}

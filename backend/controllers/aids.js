@@ -116,7 +116,7 @@ const allAids = async (req, res, next) => {
 
       for(let userAid of userAids) {
         for(let otherAid of otherAids){
-          if(otherAid.type === userAid.type || otherAid.categoryList[0].name !== userAid.categoryList[0].name /*|| otherAid.location !== userAid.location*/) continue;
+          if(otherAid.type === userAid.type || otherAid.categoryList[0].name !== userAid.categoryList[0].name || otherAid.location !== userAid.location) continue;
           
           let list, subList;
           if(otherAid.type === 'Provide') {
