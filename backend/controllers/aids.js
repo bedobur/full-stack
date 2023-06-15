@@ -21,10 +21,11 @@ const includeOptions = [
   { model: User, as: "author", attributes: { exclude: ["email"] } },
 ];
 
-function isSubList(list, sublist) {
+function isMatched(list, sublist) {
+  let miscount = 0;
   for (const item of sublist) {
     if (!list.includes(item)) {
-      return false;
+      if(++miscount > Math.floor(list.length/2)) return false;
     }
   }
   return true;
@@ -112,11 +113,12 @@ const allAids = async (req, res, next) => {
       **  !!!!!!!!!!!!!!!!!!!!! MATCHING ALGORITHM STARTS HERE !!!!!!!!!!!!!!!!!!!!!
       */
 
+      let matchedAidsPriority = new Set();
       let matchedAids = new Set();
 
       for(let userAid of userAids) {
         for(let otherAid of otherAids){
-          if(otherAid.type === userAid.type || otherAid.categoryList[0].name !== userAid.categoryList[0].name || otherAid.location !== userAid.location) continue;
+          if(otherAid.type === userAid.type || otherAid.categoryList[0].name !== userAid.categoryList[0].name) continue;
           
           let list, subList;
           if(otherAid.type === 'Provide') {
@@ -127,19 +129,20 @@ const allAids = async (req, res, next) => {
             subList = otherAid.subcategoryList;
           }
 
-          if(isSubList(list, subList)){
-            matchedAids.add(otherAid);
+          if(isMatched(list, subList)){
+            if(otherAid.location === userAid.location) matchedAidsPriority.add(otherAid);
+            else matchedAids.add(otherAid);
           }
         }
       }
 
-      matchedAids = [...matchedAids]
+      let allMatchedAids = [...matchedAidsPriority, ...matchedAids]
 
       /*
       **  !!!!!!!!!!!!!!!!!!!!! MATCHING ALGORITHM ENDS HERE !!!!!!!!!!!!!!!!!!!!!
       */
 
-      res.json({ aids: matchedAids, aidsCount: matchedAids.length });
+      res.json({ aids: allMatchedAids, aidsCount: allMatchedAids.length });
     }
     else res.json({ aids: aids.rows, aidsCount: aids.count });
   } catch (error) {
@@ -160,7 +163,7 @@ const createAid = async (req, res, next) => {
     if (!body) throw new FieldRequiredError("An aid body");
     if (!location) throw new FieldRequiredError("A location");
 
-    const slug = slugify(title);
+    const slug = slugify(`${title}-${loggedUser.dataValues.id}`);
     const slugInDB = await Aid.findOne({ where: { slug: slug } });
     if (slugInDB) throw new AlreadyTakenError("Title");
 
