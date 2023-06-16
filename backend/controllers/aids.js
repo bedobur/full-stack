@@ -25,7 +25,7 @@ function isMatched(list, sublist) {
   let miscount = 0;
   for (const item of sublist) {
     if (!list.includes(item)) {
-      if(++miscount > Math.floor(list.length/2)) return false;
+      if(++miscount > Math.floor(sublist.length/3)) return false;
     }
   }
   return true;
